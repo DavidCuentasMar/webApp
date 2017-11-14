@@ -1,16 +1,36 @@
-<!--DOCTYPE html -->
-<html>
-<head>
-	<title></title>
-</head>
-<body>
-<h1>{{title}}</h1>
+{% extends "base.html" %}
 
-{{instance.title}}</br>
-{{instance.content}}</br>
-{{instance.timestamp}}</br>
-{{instance.updated}}</br>
-{{instance.id}}</br>
+{% block head_title %}
+{{ instance.title }} | {{ block.super }}
+{% endblock head_title%}
 
-</body>
-</html>
+{% block content %}
+<div class="row">
+	<div class="col s12">
+		<hr>
+		<center><h1><strong>{{instance.title}}</strong></h1></center>		
+	</div>
+</div>
+<div class="row">
+	<div class="col s6">
+		<hr>
+			<P ALIGN="justify"> 
+				{{instance.content}}</br>
+			</P>
+		<hr>
+			<i>{{instance.timestamp}}</br></i>
+			<!--{{instance.updated}}</br>-->
+			<!--{{instance.id}}</br>-->
+		
+	</div>
+	<div class="col s6">
+	{% if instance.image %}
+	<hr>
+		<center><img src="{{instance.image.url}}"  class='ImgDetail'></center>
+			{% endif %}
+	</div>
+</div>
+
+
+
+{% endblock content %}

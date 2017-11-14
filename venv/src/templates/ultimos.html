@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block content %}
+      <div class="row">
+        {% for obj in object_list %}
+          <div class="col s4 m4">
+            <div class="card">
+              <div class="card-image">
+                {% if obj.image %}
+                <img src="{{obj.image.url}}" class="ima">
+                  {% endif %}
+                  <a class="btn-floating halfway-fab waves-effect waves-light botoncolor"><i class="material-icons">add</i></a>
+              </div>
+              <div class="card-content">
+                <p>{{ obj.content|linebreaks|truncatechars:120 }}</p>
+              </div>
+              <div class="card-action">
+                 <strong><a href='{{ obj.get_absolute_url }}'>{{ obj.title }}</a></strong>
+              </div>
+            </div>
+          </div>
+        {% if forloop.counter|divisibleby:3 %}</div><div class='row'>{% endif %}
+        {% endfor %}
+          </div>
+          		<div class="pagination">
+		    <span class="step-links">
+		        {% if object_list.has_previous %}
+		            <a href="?page={{ object_list.previous_page_number }}">previous</a>
+		        {% endif %}
+
+		        <span class="current">
+		            Page {{ object_list.number }} of {{ object_list.paginator.num_pages }}.
+		        </span>
+
+		        {% if object_list.has_next %}
+		            <a href="?page={{ object_list.next_page_number }}">next</a>
+		        {% endif %}
+		    </span>
+		</div>
+	</div>
+
+
+
+{% endblock content %}

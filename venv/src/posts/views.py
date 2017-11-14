@@ -1,21 +1,31 @@
+from django.contrib import messages
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.http import HttpResponse, HttpResponseRedirect
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
 
 # Create your views here.
 from .forms import PostForm
 from .models import Post
 
 def post_create(request):
-	form = PostForm(request.POST or None)
+	form = PostForm(request.POST or None, request.DATA or None)
 	if form.is_valid():
 		instance = form.save(commit=False)
 		instance.save()
+		messages.success(request, "Successfully Created")
 		return HttpResponseRedirect(instance.get_absolute_url())
-
+	else:
+		messages.error(request, "Not Successfully Created")
 	context ={
 		"form": form,
 	}
 	return render(request,"post_form.html", context)
+
+def nosotros(request):
+	return render(request,"nosotros.html")	
+
+def ayuda(request):
+	return render(request,"ayuda.html")	
 
 def post_detail(request, id):
 	#instance = Post.objects.get(id=1)
@@ -27,19 +37,50 @@ def post_detail(request, id):
 	return render(request, "post_detail.html", context)
 
 def post_list(request):
-	queryset = Post.objects.all()
+	queryset_list = Post.objects.all().order_by("-timestamp")
+	paginator = Paginator(queryset_list, 9) # Show 25 contacts per page
+
+	page = request.GET.get('page')
+	try:
+		queryset = paginator.page(page)
+	except PageNotAnInteger:
+		# If page is not an integer, deliver first page.
+		queryset = paginator.page(1)
+	except EmptyPage:
+		# If page is out of range (e.g. 9999), deliver last page of results.
+		queryset = paginator.page(paginator.num_pages)
 	context = {
 		"object_list": queryset,
-		"title": "List"
+		"title": "Blog de la Mujer"
 	}
-	return render(request, "index.html", context)
+	return render(request, "base.html", context)
+
+def ultimos(request):
+	queryset_list = Post.objects.all().order_by("-timestamp")
+	paginator = Paginator(queryset_list, 27) # Show 25 contacts per page
+
+	page = request.GET.get('page')
+	try:
+		queryset = paginator.page(page)
+	except PageNotAnInteger:
+		# If page is not an integer, deliver first page.
+		queryset = paginator.page(1)
+	except EmptyPage:
+		# If page is out of range (e.g. 9999), deliver last page of results.
+		queryset = paginator.page(paginator.num_pages)
+	context = {
+		"object_list": queryset,
+		"title": "Blog de la Mujer"
+	}
+	return render(request, "ultimos.html", context)
 
 def post_update(request, id=None):
 	instance = get_object_or_404(Post, id=id)
-	form = PostForm(request.POST or None, instance=instance)
+	form = PostForm(request.POST or None,request.DATA or None, instance=instance)
 	if form.is_valid():
 		instance = form.save(commit=False)
 		instance.save()
+		messages.success(request, "Item saved")
 		return HttpResponseRedirect(instance.get_absolute_url())		
 
 	context = {
@@ -52,5 +93,8 @@ def post_update(request, id=None):
 
 
 
-def post_delete(request):
-	return HttpResponse("<h1>Delete</h1>")				
+def post_delete(request, id=None):
+	instance = get_object_or_404(Post, id=id)
+	instance.delete()
+	messages.success(request, "Successfully Deleted")
+	return redirect("posts:list")		

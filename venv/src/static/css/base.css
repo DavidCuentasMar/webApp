@@ -1,0 +1,35 @@
+body{
+	background-color: #FFFFFF;
+}
+.topolio{
+	margin-top: 20px;
+}
+
+.image{
+	width: 242px;
+	height: 200px;
+
+}
+.sliderD{
+
+	height: 400px;
+
+}
+.ima{
+	width: 218px;
+	height: 218px;
+
+}
+.color{
+	background-color: #D32F2F;
+}
+.navtitle{
+	color: #FFFFFF;
+}
+.botoncolor{
+	background-color: #D32F2F;
+}
+.ImgDetail{
+	width: 400px;
+	height: 400px;
+}
